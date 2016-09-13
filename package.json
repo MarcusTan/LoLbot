@@ -6,10 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "MT",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^9.1.1",
+    "discord.js": "^9.2.0",
+    "phantomjs-prebuilt": "^2.1.12",
     "request": "^2.74.0"
   }
 }
