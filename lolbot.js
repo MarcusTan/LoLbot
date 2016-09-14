@@ -3,9 +3,16 @@ const Discord = require('discord.js'),
       fs = require('fs'),
       configFile = 'config.json';
       bot = new Discord.Client(),
-      commands = require('./lib/commands')(bot);
+      helpers = require('./lib/helpers'),
+      adminCommands = require('./lib/adminCommands'),
+      lolCommands = require('./lib/lolCommands');
 
-// TODO: STRING HELPER for \`\`\`
+// TODO
+// changing cb to promises
+// REQUEST HELPER FUNCTION
+// regionsLive  + platforms [{},{},{}]
+// picture mmr
+// http://aram.lolalytics.com/champion/Akali/
 
 // static data
 let config;
@@ -50,7 +57,6 @@ exports.regionPlatforms = regionPlatforms;
 exports.roles = roles;
 exports.commandsList = commandsList;
 
-// static methods
 // read the config file and populate the config var
 const readConfig = (cb) => {
     try {
@@ -65,7 +71,7 @@ const readConfig = (cb) => {
     }   
 }
 
-// do things with the config options
+// Error check config options
 const populateOptions = () => {
     if (!config.commandPrefix) {
         console.log('Please set a valid command prefix');
@@ -85,4 +91,55 @@ bot.on('ready', () => {
 
 bot.on('error', (error) => {
     console.log('lolbot encountered an error:' + error);
+});
+
+// bot commands
+bot.on('message', msg => {
+    /* ---------- Admin Commands ---------- */
+    //commands
+    if (msg.content.startsWith(config.commandPrefix + 'commands')) {
+        msg.channel.sendMessage(adminCommands.getCommands());
+    }
+    // help
+    if (msg.content.startsWith(config.commandPrefix + 'h')) {
+        msg.channel.sendMessage(adminCommands.getHelp(msg.content.split(' ')));
+    }
+    // set the name of bot
+    if (msg.content.startsWith(config.commandPrefix + 'setname')) {
+        adminCommands.setName(msg.content.split(' '), msg, bot.user);
+    }
+
+    /* ---------- LoL Commands ---------- */
+    // whatismymmr
+    if (msg.content.startsWith(config.commandPrefix + 'mmr')) {
+        lolCommands.getMmr(msg.content.split(' '), (retMsg) => {
+            msg.channel.sendMessage(retMsg);
+        });
+    }
+
+    // championgg - bestRated
+    if (msg.content.startsWith(config.commandPrefix + 'bestrated')) {
+        lolCommands.getBestRated(msg.content.split(' '), (retMsg) => {
+            msg.channel.sendMessage(retMsg);
+        });
+    }
+
+    // championgg - winrate
+    if (msg.content.startsWith(config.commandPrefix + 'bestwinrate')) {
+        lolCommands.getBestWinrate(msg.content.split(' '), (retMsg) => {
+            msg.channel.sendMessage(retMsg);
+        });
+    }
+
+    // Screencap quickfind.kassad.in for live games
+    if (msg.content.startsWith(config.commandPrefix + 'live')) {
+        lolCommands.getLive(msg.content.split(' '), (liveGame) => {
+            if (liveGame.picPath) {
+                msg.channel.sendFile(liveGame.picPath, liveGame.picFileName, liveGame.retMsg);
+            } else {
+                msg.channel.sendMessage(liveGame.retMsg);
+            }
+        });
+    }      
+
 });

@@ -1,4 +1,7 @@
-#generated files
+# Config file
+config.json
+
+# Generated files
 *.jpg
 *.png
 *.gif
