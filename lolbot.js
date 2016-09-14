@@ -139,6 +139,7 @@ bot.on('message', msg => {
 
     // championgg - winrate
     if (msg.content.startsWith(config.commandPrefix + 'bestwinrate')) {
+        helpers.logCommand(msg);
         lolCommands.getBestWinrate(msg.content.split(' '), (retMsg) => {
             msg.channel.sendMessage(retMsg);
         });
