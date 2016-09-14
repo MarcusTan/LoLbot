@@ -2,6 +2,7 @@
 config.json
 
 # Generated files
+.git.bfg-report
 *.jpg
 *.png
 *.gif
