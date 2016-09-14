@@ -9,17 +9,26 @@ const Discord = require('discord.js'),
 
 // TODO
 // changing cb to promises
-// REQUEST HELPER FUNCTION
-// regionsLive  + platforms [{},{},{}]
+// champion gg list helper
 // picture mmr
 // http://aram.lolalytics.com/champion/Akali/
 
 // static data
 let config;
 const regionsMmr = ['na', 'euw', 'eune'],
-      regionsLive = ['na', 'euw', 'eune', 'kr', 'br', 'jp', 'oce', 'las', 'ru', 'tr'],
       // Region -> PlatformID (https://developer.riotgames.com/docs/spectating-games)
-      regionPlatforms = ['NA1', 'EUW1', 'EUN1', 'KR', 'BR1', 'JP1', 'OC1', 'LA2', 'RU', 'TR1'],
+      regionsLive = {
+          'na' : { platform: 'NA1' },
+          'euw' : { platform: 'EUW1' },
+          'eune' : { platform: 'EUN1' },
+          'kr' : { platform: 'KR' },
+          'br' : { platform: 'BR1' },
+          'jp' : { platform: 'JP1' },
+          'oce' : { platform: 'OC1' },
+          'las' : { platform: 'LA2' },
+          'ru' : { platform: 'RU' },
+          'tr' : { platform: 'TR1' }
+      },
       roles = ['top', 'middle', 'jungle', 'adc', 'support'];
 const commandsList = {
         'commands': 'Lists all available commands',
@@ -53,7 +62,6 @@ const commandsList = {
     };
 exports.regionsMmr = regionsMmr;
 exports.regionsLive = regionsLive;
-exports.regionPlatforms = regionPlatforms;
 exports.roles = roles;
 exports.commandsList = commandsList;
 
@@ -98,20 +106,24 @@ bot.on('message', msg => {
     /* ---------- Admin Commands ---------- */
     //commands
     if (msg.content.startsWith(config.commandPrefix + 'commands')) {
+        helpers.logCommand(msg);
         msg.channel.sendMessage(adminCommands.getCommands());
     }
     // help
     if (msg.content.startsWith(config.commandPrefix + 'h')) {
+        helpers.logCommand(msg);
         msg.channel.sendMessage(adminCommands.getHelp(msg.content.split(' ')));
     }
     // set the name of bot
     if (msg.content.startsWith(config.commandPrefix + 'setname')) {
+        helpers.logCommand(msg);
         adminCommands.setName(msg.content.split(' '), msg, bot.user);
     }
 
     /* ---------- LoL Commands ---------- */
     // whatismymmr
     if (msg.content.startsWith(config.commandPrefix + 'mmr')) {
+        helpers.logCommand(msg);
         lolCommands.getMmr(msg.content.split(' '), (retMsg) => {
             msg.channel.sendMessage(retMsg);
         });
@@ -119,6 +131,7 @@ bot.on('message', msg => {
 
     // championgg - bestRated
     if (msg.content.startsWith(config.commandPrefix + 'bestrated')) {
+        helpers.logCommand(msg);
         lolCommands.getBestRated(msg.content.split(' '), (retMsg) => {
             msg.channel.sendMessage(retMsg);
         });
@@ -133,6 +146,7 @@ bot.on('message', msg => {
 
     // Screencap quickfind.kassad.in for live games
     if (msg.content.startsWith(config.commandPrefix + 'live')) {
+        helpers.logCommand(msg);
         lolCommands.getLive(msg.content.split(' '), (liveGame) => {
             if (liveGame.picPath) {
                 msg.channel.sendFile(liveGame.picPath, liveGame.picFileName, liveGame.retMsg);
