@@ -9,6 +9,7 @@ const Discord = require('discord.js'),
       lolCommands = require('./lib/lolCommands');
 
 // TODO
+// retry mmr if ERROR: internal connection error (000)
 // strict vs no strict?
 // redo docstrings for jsdocs
 // quickfind: support asian language + wait for page to load
